@@ -18,7 +18,6 @@ def main():
     for (column_name, column_data) in df.items():
         if column_name == "Time":
             continue
-        print(f'{column_name}: {np.nanmax(column_data.values)}')
         if np.nanmax(column_data.values) > USAGE_THRESHOLD:
             df.drop(columns=column_name, inplace=True)
 
@@ -26,7 +25,6 @@ def main():
     for (column_name, column_data) in df.items():
         if column_name == "Time":
             continue
-        print(f'{column_name}: {np.nanmax(column_data.values)}')
         
         i = 0
         row_start = None
@@ -43,19 +41,14 @@ def main():
                 running = True
                 break
         row_end = i - 1
-        print(f'\t{row_start}, {row_end}')
-        if running:
-            print('\trunning')
 
         times = df.get("Time")
         time_start = datetime.strptime(times[row_start], TIME_FORMAT)
         time_end = datetime.strptime(times[row_end], TIME_FORMAT)
         time = time_end - time_start
-        print(f'\t{time}')
         if time < TIME_THRESHOLD:
             df.drop(columns = column_name, inplace=True)
 
-    print("\nDropped")
     for (column_name, column_data) in df.items():
         if column_name == "Time":
             continue
