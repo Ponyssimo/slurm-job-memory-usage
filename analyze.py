@@ -1,11 +1,15 @@
 import pandas as pd
 import numpy as np
-import datetime
+import datetime as dt
+from datetime import datetime
 import math
 import sys
 
 USAGE_THRESHOLD = 25. # Percent usage value below which a job will be flagged
-TIME_THRESHOLD = datetime.timedelta(minutes=5) # Run time below which job will be ignored
+TIME_THRESHOLD = dt.timedelta(minutes=5) # Run time below which job will be ignored
+REQUESTED_THRESHOLD = 50
+
+TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 def main():
     in_path = sys.argv[1]
@@ -42,9 +46,11 @@ def main():
         print(f'\t{row_start}, {row_end}')
         if running:
             print('\trunning')
-        intervals = row_end - row_start
-        sec = intervals * 20
-        time = datetime.timedelta(seconds=sec)
+
+        times = df.get("Time")
+        time_start = datetime.strptime(times[row_start], TIME_FORMAT)
+        time_end = datetime.strptime(times[row_end], TIME_FORMAT)
+        time = time_end - time_start
         print(f'\t{time}')
         if time < TIME_THRESHOLD:
             df.drop(columns = column_name, inplace=True)
@@ -73,9 +79,11 @@ def main():
         print(f'\t{row_start}, {row_end}')
         if running:
             print('\trunning')
-        intervals = row_end - row_start
-        sec = intervals * 20
-        time = datetime.timedelta(seconds=sec)
+
+        times = df.get("Time")
+        time_start = datetime.strptime(times[row_start], TIME_FORMAT)
+        time_end = datetime.strptime(times[row_end], TIME_FORMAT)
+        time = time_end - time_start
         print(f'\t{time}')
 
 
