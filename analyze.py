@@ -21,31 +21,11 @@ def main():
         if np.nanmax(column_data.values) > USAGE_THRESHOLD:
             df.drop(columns=column_name, inplace=True)
 
-    print("\nDropped")
     for (column_name, column_data) in df.items():
         if column_name == "Time":
             continue
         
-        i = 0
-        row_start = None
-        row_end = None
-        running = False
-        while math.isnan(column_data[i]):
-            i += 1
-        row_start = i
-        while not math.isnan(column_data[i]):
-            i += 1
-            try:
-                column_data[i]
-            except:
-                running = True
-                break
-        row_end = i - 1
-
-        times = df.get("Time")
-        time_start = datetime.strptime(times[row_start], TIME_FORMAT)
-        time_end = datetime.strptime(times[row_end], TIME_FORMAT)
-        time = time_end - time_start
+        time, running = runtime(df, column_data)
         if time < TIME_THRESHOLD:
             df.drop(columns = column_name, inplace=True)
 
@@ -54,31 +34,32 @@ def main():
             continue
         print(f'{column_name}: {np.nanmax(column_data.values)}')
 
-        i = 0
-        row_start = None
-        row_end = None
-        running = False
-        while math.isnan(column_data[i]):
-            i += 1
-        row_start = i
-        while not math.isnan(column_data[i]):
-            i += 1
-            try:
-                column_data[i]
-            except:
-                running = True
-                break
-        row_end = i - 1
-        print(f'\t{row_start}, {row_end}')
+        time, running = runtime(df, column_data)
         if running:
             print('\trunning')
-
-        times = df.get("Time")
-        time_start = datetime.strptime(times[row_start], TIME_FORMAT)
-        time_end = datetime.strptime(times[row_end], TIME_FORMAT)
-        time = time_end - time_start
         print(f'\t{time}')
 
+def runtime(df, column_data):
+    i = 0
+    row_start = None
+    row_end = None
+    running = False
+    while math.isnan(column_data[i]):
+        i += 1
+    row_start = i
+    while not math.isnan(column_data[i]):
+        i += 1
+        try:
+            column_data[i]
+        except:
+            running = True
+            break
+    row_end = i - 1
+
+    times = df.get("Time")
+    time_start = datetime.strptime(times[row_start], TIME_FORMAT)
+    time_end = datetime.strptime(times[row_end], TIME_FORMAT)
+    return (time_end - time_start, running)
 
 if __name__ == "__main__":
     main()
