@@ -20,11 +20,6 @@ def main():
             continue
         if np.nanmax(column_data.values) > USAGE_THRESHOLD:
             df.drop(columns=column_name, inplace=True)
-
-    for (column_name, column_data) in df.items():
-        if column_name == "Time":
-            continue
-        
         time, running = runtime(df, column_data)
         if time < TIME_THRESHOLD:
             df.drop(columns = column_name, inplace=True)
